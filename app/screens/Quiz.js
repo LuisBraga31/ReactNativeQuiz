@@ -13,6 +13,8 @@ const Quiz = () => {
     const [correctOption, setCorrectOption] = useState(null);
     const [isOptionDisabled, setIsOptionDisabled] = useState(false);
     const [score, setScore] = useState(0);
+    const [showNextButton, setShowNextButton] = useState(false);
+    const [showScoreModal, setShowScoreModal] = useState(false);
 
     const validateAnswer = (selectOption) => {
         let correct_option = allQuestions[currentQuestionIndex]['correct_option'];
@@ -22,7 +24,20 @@ const Quiz = () => {
         if(selectOption === correct_option) {
             setScore(score+1);
         }
+        setShowNextButton(true);
 
+    }
+
+    const handleNext = () => {
+        if(currentQuestionIndex === allQuestions.length-1) {
+            setShowScoreModal(true); 
+        } else {
+            setCurrentQuestionIndex(currentQuestionIndex+1)
+            setCurrentOptionSelected(null)
+            setCorrectOption(null)
+            setIsOptionDisabled(false)
+            setShowNextButton(false)
+        }
     }
 
     const renderQuestion = () => {
@@ -77,20 +92,32 @@ const Quiz = () => {
         )
     }
 
+    const renderNextButton = () => {
+        if(showNextButton) {
+            return (
+                <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
+                    <Text style={styles.nextButtonText}> Next </Text>
+                </TouchableOpacity>
+            )
+        }
+    }
+
 
     return (
-    <SafeAreaView style={{flex: 1}}>
-      <StatusBar barStyle="light-content" backgroundColor={COLORS.primary}/>
-      <View style={styles.container}>
-        
-        {renderQuestion()}
+        <SafeAreaView style={{flex: 1}}>
+        <StatusBar barStyle="light-content" backgroundColor={COLORS.primary}/>
+        <View style={styles.container}>
+            
+            {renderQuestion()}
 
-        {renderOptions()}
+            {renderOptions()}
 
-        <Image source={require('../assets/img/DottedBG.png')} style={styles.backImg} resizeMode={'contain'}/>
-      </View>
+            {renderNextButton()}
 
-    </SafeAreaView>
+            <Image source={require('../assets/img/DottedBG.png')} style={styles.backImg} resizeMode={'contain'}/>
+        </View>
+
+        </SafeAreaView>
   )
 }
 
@@ -157,5 +184,17 @@ const styles = StyleSheet.create({
     optionIconItem: {
         color: COLORS.white,
         fontSize: 20,
+    },
+    nextButton: {
+        marginTop: 20,
+        width: '100%',
+        backgroundColor: COLORS.accent,
+        padding: 20,
+        borderRadius: 5
+    },
+    nextButtonText: {
+        fontSize: 20,
+        color: COLORS.white,
+        textAlign: 'center',
     }
 })
