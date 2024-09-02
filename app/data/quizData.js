@@ -5,7 +5,7 @@ export default data = [
         correct_option: "Jupiter"
     },
     {
-        question: "Qual o monumento da Índia é um dos mais famosos do mundop ?",
+        question: "Qual o monumento da Índia é um dos mais famosos do mundo?",
         options: ["Chand Minar","Taj Mahal","Stadium"],
         correct_option: "Taj Mahal"
     },
