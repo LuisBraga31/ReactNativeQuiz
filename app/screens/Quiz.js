@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { COLORS, SIZES } from '../constants';
 import data from '../data/quizData';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import { Image, SafeAreaView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Modal, SafeAreaView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const Quiz = () => {
 
@@ -38,6 +38,16 @@ const Quiz = () => {
             setIsOptionDisabled(false)
             setShowNextButton(false)
         }
+    }
+
+    const restartQuiz = () => {
+        setShowScoreModal(false);
+        setCurrentQuestionIndex(0);
+        setScore(0);
+        setCurrentOptionSelected(null);
+        setCorrectOption(null);
+        setIsOptionDisabled(false);
+        setShowNextButton(false);
     }
 
     const renderQuestion = () => {
@@ -113,6 +123,33 @@ const Quiz = () => {
             {renderOptions()}
 
             {renderNextButton()}
+            
+            <Modal animationType="slide" transparent={true} visible={showScoreModal}>
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                           
+                        <Text style={{fontSize: 30, fontWeight: 'bold'}}>
+                            { score> (allQuestions.length/2) ? 'Congratulations!' : 'Oops!' }
+                        </Text>
+
+                        <View style={styles.modalScore}>
+                            <Text style={{fontSize: 30, color: score> (allQuestions.length/2) ? COLORS.success : COLORS.error}}> 
+                                {score}
+                            </Text>
+
+                            <Text style={{fontSize: 20, color: COLORS.black}}>
+                                / { allQuestions.length }
+                            </Text>
+                        </View>
+                        
+                        <TouchableOpacity onPress={restartQuiz} style={styles.restartButton}>
+                            <Text style={styles.restartButtonText}> Retry Quiz </Text>
+                        </TouchableOpacity>
+
+                       </View>
+
+                   </View>
+               </Modal>
 
             <Image source={require('../assets/img/DottedBG.png')} style={styles.backImg} resizeMode={'contain'}/>
         </View>
@@ -196,5 +233,36 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color: COLORS.white,
         textAlign: 'center',
+    },
+
+    modalContainer: {
+        flex: 1,
+        backgroundColor: COLORS.primary,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    modalContent: {
+        backgroundColor: COLORS.white,
+        width: '90%',
+        borderRadius: 20,
+        padding: 20,
+        alignItems: 'center'
+    },
+    modalScore: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        marginVertical: 20
+    },
+    restartButton: {
+        backgroundColor: COLORS.accent,
+        padding: 20, 
+        width: '100%', 
+        borderRadius: 20
+    },
+    restartButtonText: {
+        textAlign: 'center', 
+        color: COLORS.white, 
+        fontSize: 20
     }
 })
