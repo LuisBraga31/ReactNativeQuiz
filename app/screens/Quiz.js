@@ -3,12 +3,27 @@ import React, { useState } from 'react'
 import { COLORS, SIZES } from '../constants';
 import data from '../data/quizData';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import { Image, SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { Image, SafeAreaView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const Quiz = () => {
 
     const allQuestions = data;
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+    const [currentOptionSelected, setCurrentOptionSelected] = useState(null);
+    const [correctOption, setCorrectOption] = useState(null);
+    const [isOptionDisabled, setIsOptionDisabled] = useState(false);
+    const [score, setScore] = useState(0);
+
+    const validateAnswer = (selectOption) => {
+        let correct_option = allQuestions[currentQuestionIndex]['correct_option'];
+        setCurrentOptionSelected(selectOption);
+        setCorrectOption(correct_option);
+        setIsOptionDisabled(true);
+        if(selectOption === correct_option) {
+            setScore(score+1);
+        }
+
+    }
 
     const renderQuestion = () => {
         return (
@@ -24,6 +39,43 @@ const Quiz = () => {
         )
     }
 
+    const renderOptions = () => {
+        return (
+            <View>
+                {allQuestions[currentQuestionIndex]?.options.map(option => (
+                    <TouchableOpacity key={option} onPress={()=> validateAnswer(option)} disabled={isOptionDisabled}
+                    style={[styles.option, {
+                        borderColor: 
+                            option==correctOption ? COLORS.success : 
+                            option==currentOptionSelected ? COLORS.error :
+                            COLORS.secondary+'20',
+                        backgroundColor:
+                            option==correctOption ? COLORS.success+'20' : 
+                            option==currentOptionSelected ? COLORS.error+'20' :
+                            COLORS.secondary+'20',
+                         }]} 
+                    >
+                        
+                        <Text style={styles.optionText}>{option}</Text>
+                        { 
+                            option == correctOption ? (
+                                <View style={[styles.optionIcon, {backgroundColor: COLORS.success}]}>
+                                    <MaterialCommunityIcons name="check" style={styles.optionIconItem}/>
+                                </View> 
+                            ) : option == currentOptionSelected ? (
+                                <View style={[styles.optionIcon, {backgroundColor: COLORS.error}]}>
+                                    <MaterialCommunityIcons name="close" style={styles.optionIconItem}/>
+                                </View> 
+                            ) : null
+                        }
+
+                    </TouchableOpacity>
+                ))}
+
+
+            </View>
+        )
+    }
 
 
     return (
@@ -32,6 +84,9 @@ const Quiz = () => {
       <View style={styles.container}>
         
         {renderQuestion()}
+
+        {renderOptions()}
+
         <Image source={require('../assets/img/DottedBG.png')} style={styles.backImg} resizeMode={'contain'}/>
       </View>
 
@@ -77,5 +132,30 @@ const styles = StyleSheet.create({
     textQuestion: {
         color: COLORS.white,
         fontSize: 30,
+    },
+    option: {
+        borderWidth: 3,
+        height: 60,
+        borderRadius: 20,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 20,
+        marginVertical: 10,
+    },
+    optionText: {
+        color: COLORS.white,
+        fontSize: 20,
+    },
+    optionIcon: {
+        width: 30,
+        height: 30,
+        borderRadius: 30/2,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    optionIconItem: {
+        color: COLORS.white,
+        fontSize: 20,
     }
 })
